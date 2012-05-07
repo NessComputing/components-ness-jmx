@@ -1,4 +1,4 @@
-package ness.jmx.starter;
+package com.nesscomputing.jmx.starter;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -10,18 +10,20 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
-import ness.jmx.starter.guice.JmxStarterModule;
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.nesscomputing.jmx.starter.guice.JmxStarterModule;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.OnStage;
+import com.nesscomputing.logging.Log;
 
 /**
  * Exports an MBean Server through RMI and makes sure that the RMI server only binds to the Hostname and Port given.
  */
 public class JmxExporter
 {
+    private static final Log LOG = Log.findLog();
+
     private final JMXServiceURL url;
     private final JMXConnectorServer connectorServer;
     private final JmxExporterConfig config;
@@ -54,6 +56,11 @@ public class JmxExporter
         return url;
     }
 
+    public boolean isActive()
+    {
+        return connectorServer.isActive();
+    }
+
     @OnStage(LifecycleStage.START)
     public void start()
         throws IOException
@@ -65,6 +72,7 @@ public class JmxExporter
         LocateRegistry.createRegistry(config.getRmiRegistryPort(), factory, factory);
 
         connectorServer.start();
+        LOG.info("Started exporter on port %d", config.getRmiRegistryPort());
     }
 
 
@@ -72,5 +80,6 @@ public class JmxExporter
     public void stop() throws IOException
     {
         connectorServer.stop();
+        LOG.info("Stopped exporter on port %d", config.getRmiRegistryPort());
     }
 }

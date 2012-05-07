@@ -1,4 +1,4 @@
-package ness.jmx.starter.guice;
+package com.nesscomputing.jmx.starter.guice;
 
 import org.skife.config.Config;
 import org.skife.config.Default;

@@ -1,4 +1,4 @@
-package ness.jmx.starter;
+package com.nesscomputing.jmx.starter;
 
 import java.io.IOException;
 import java.net.InetAddress;

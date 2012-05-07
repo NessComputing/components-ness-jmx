@@ -1,4 +1,4 @@
-package ness.jmx.jolokia;
+package com.nesscomputing.jmx.jolokia;
 
 import java.util.Map;
 

@@ -1,22 +1,18 @@
-package ness.jmx.starter.guice;
+package com.nesscomputing.jmx.starter.guice;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Map;
-
-import ness.jmx.starter.JmxExporter;
-import ness.jmx.starter.JmxExporterConfig;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.nesscomputing.config.Config;
-import com.nesscomputing.galaxy.GalaxyConfig;
+import com.nesscomputing.jmx.starter.JmxExporter;
+import com.nesscomputing.jmx.starter.JmxExporterConfig;
 import com.nesscomputing.logging.Log;
 
 public class JmxStarterModule extends AbstractModule
@@ -53,21 +49,11 @@ public class JmxStarterModule extends AbstractModule
 
             bind(new TypeLiteral<Map<String, String>>() {}).annotatedWith(JMX_STARTER_NAMED).toInstance(builder.build());
 
+            bind(JmxExporterConfig.class).toProvider(JmxExporterConfigProvider.class).in(Scopes.SINGLETON);
             bind(JmxExporter.class).asEagerSingleton();
         }
         else {
             LOG.info("Not exporting JMX.");
         }
-    }
-
-    @Provides
-    public JmxExporterConfig getJmxExporterConfig(final JmxStarterConfig jmxStarterConfig, final GalaxyConfig galaxyConfig)
-        throws IOException
-    {
-        final String host = jmxStarterConfig.isBindInternal() ? galaxyConfig.getInternalIp().getIp()
-                                                              : galaxyConfig.getExternalIp().getIp();
-        final int port = galaxyConfig.getPrivate().getPortJmx();
-
-        return JmxExporterConfig.defaultJmxExporterConfig(InetAddress.getByName(host), port);
     }
 }
