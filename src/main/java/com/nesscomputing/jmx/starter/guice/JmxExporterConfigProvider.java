@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.nesscomputing.galaxy.GalaxyConfig;
 import com.nesscomputing.jmx.starter.JmxExporterConfig;
+import com.nesscomputing.jmx.starter.NetUtils;
 
 public class JmxExporterConfigProvider implements Provider<JmxExporterConfig>
 {
@@ -18,7 +19,8 @@ public class JmxExporterConfigProvider implements Provider<JmxExporterConfig>
     {
         final String host = jmxStarterConfig.isBindInternal() ? galaxyConfig.getInternalIp().getIp()
                                                       : galaxyConfig.getExternalIp().getIp();
-        final int port = galaxyConfig.getPrivate().getPortJmx();
+        final int port = galaxyConfig.getPrivate().getPortJmx() == 0 ? NetUtils.findUnusedPort()
+                                                                     : galaxyConfig.getPrivate().getPortJmx();
 
         this.jmxExporterConfig = JmxExporterConfig.defaultJmxExporterConfig(InetAddress.getByName(host), port);
     }

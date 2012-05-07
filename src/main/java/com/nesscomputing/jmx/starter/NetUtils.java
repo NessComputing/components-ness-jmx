@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
-final class NetUtils
+public final class NetUtils
 {
     public static int findUnusedPort()
             throws IOException

@@ -18,7 +18,11 @@ import com.nesscomputing.jmx.starter.JmxExporter;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
+import com.nesscomputing.testing.lessio.AllowNetworkAccess;
+import com.nesscomputing.testing.lessio.AllowNetworkListen;
 
+@AllowNetworkListen(ports={0})
+@AllowNetworkAccess(endpoints={"127.0.0.1:*"})
 public class TestJmxStarterModule
 {
     @Inject
@@ -36,7 +40,7 @@ public class TestJmxStarterModule
     @Test
     public void testDefault()
     {
-        final Config config = Config.getEmptyConfig();
+        final Config config = Config.getFixedConfig("galaxy.private.port.jmx", "0");
         final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config), new JmxStarterModule(config), new GalaxyConfigModule());
         inj.injectMembers(this);
         Assert.assertNotNull(jmxExporter);
@@ -46,7 +50,7 @@ public class TestJmxStarterModule
     public void testLifecycle()
         throws Exception
     {
-        final Config config = Config.getEmptyConfig();
+        final Config config = Config.getFixedConfig("galaxy.private.port.jmx", "0");
         final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config), new LifecycleModule(), new JmxStarterModule(config), new GalaxyConfigModule());
         inj.injectMembers(this);
 
