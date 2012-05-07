@@ -81,11 +81,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.inject.extensions</groupId>
-      <artifactId>guice-multibindings</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.weakref</groupId>
       <artifactId>jmxutils</artifactId>
       <version>1.12</version>
@@ -100,6 +95,12 @@
     <dependency>
       <groupId>org.skife.config</groupId>
       <artifactId>config-magic</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-multibindings</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
