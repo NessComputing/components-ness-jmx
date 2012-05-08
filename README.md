@@ -1,20 +1,17 @@
-Ness Computing Configuration Component
-======================================
+Ness Computing JMX Component
+============================
 
 Component Charter
 -----------------
 
-* Access to application configuration on the file system, the class path and HTTP and HTTPS URIs.
-* Create beans to access configuration.
-* Allow hierarchical configuration
-* integrate system properties for configuration overrides
+* Expose MBeans server and exporter
+* Bind JMX to defined ports and IPs.
+* Expose JMX information through REST API.
 
 Component Level
 ---------------
 
-*Foundation component*
-
-* Allowed dependencies: logging component, tinyhttp component.
+* Use logging, lifecycle, config, galaxy.
 
 ----
 Copyright (C) 2012 Ness Computing, Inc.
