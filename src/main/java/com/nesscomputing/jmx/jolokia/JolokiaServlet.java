@@ -119,7 +119,6 @@ public class JolokiaServlet extends HttpServlet
 
     private final class HttpPostHandler implements ServletRequestHandler
     {
-        @SuppressWarnings("unchecked")
         @Override
         public JSONAware handleRequest(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
             final String encoding = req.getCharacterEncoding();
@@ -130,7 +129,6 @@ public class JolokiaServlet extends HttpServlet
 
     private final class HttpGetHandler implements ServletRequestHandler
     {
-        @SuppressWarnings("unchecked")
         @Override
         public JSONAware handleRequest(final HttpServletRequest req, final HttpServletResponse resp) {
             return requestHandler.handleGetRequest(req.getRequestURI(),req.getPathInfo(),req.getParameterMap());

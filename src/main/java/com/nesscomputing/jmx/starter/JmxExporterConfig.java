@@ -44,7 +44,7 @@ public final class JmxExporterConfig
         throws IOException
     {
         return new JmxExporterConfig(
-            (hostname != null) ? hostname : InetAddress.getLocalHost(),
+            (hostname != null) ? hostname : InetAddress.getByName(null),
             (rmiRegistryPort != null) ? rmiRegistryPort : NetUtils.findUnusedPort(),
             (rmiServerPort != null) ? rmiServerPort : NetUtils.findUnusedPort(),
             useRandomIds);

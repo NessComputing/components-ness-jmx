@@ -25,6 +25,7 @@ import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import com.google.inject.throwingproviders.ThrowingProviderBinder;
 import com.nesscomputing.config.Config;
 import com.nesscomputing.jmx.starter.JmxExporter;
 import com.nesscomputing.jmx.starter.JmxExporterConfig;
@@ -64,7 +65,12 @@ public class JmxStarterModule extends AbstractModule
 
             bind(new TypeLiteral<Map<String, String>>() {}).annotatedWith(JMX_STARTER_NAMED).toInstance(builder.build());
 
-            bind(JmxExporterConfig.class).toProvider(JmxExporterConfigProvider.class).in(Scopes.SINGLETON);
+            bind(JmxExporterConfigProvider.class).in(Scopes.SINGLETON);
+            ThrowingProviderBinder.create(binder())
+                                  .bind(IOExceptionProvider.class, JmxExporterConfig.class)
+                                  .to(JmxExporterConfigProvider.class)
+                                  .in(Scopes.SINGLETON);
+
             bind(JmxExporter.class).asEagerSingleton();
         }
         else {
