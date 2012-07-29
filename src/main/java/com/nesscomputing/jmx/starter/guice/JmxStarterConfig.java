@@ -28,13 +28,6 @@ public abstract class JmxStarterConfig
         return true;
     }
 
-    @Config("ness.jmx.bind-internal")
-    @Default("true")
-    public boolean isBindInternal()
-    {
-        return true;
-    }
-
     @Config("ness.jmx.access-file")
     @DefaultNull
     public String getAccessFile()
@@ -45,6 +38,20 @@ public abstract class JmxStarterConfig
     @Config("ness.jmx.password-file")
     @DefaultNull
     public String getPasswordFile()
+    {
+        return null;
+    }
+
+    @Config("ness.jmx.bind-address")
+    @DefaultNull
+    public String getBindAddress()
+    {
+        return null;
+    }
+
+    @Config("ness.jmx.bind-port")
+    @DefaultNull
+    public Integer getBindPort()
     {
         return null;
     }
