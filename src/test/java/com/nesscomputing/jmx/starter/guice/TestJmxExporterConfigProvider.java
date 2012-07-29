@@ -49,7 +49,7 @@ public class TestJmxExporterConfigProvider
         prepareGuice(config);
 
         final JmxExporterConfig jmxConfig = configProvider.get();
-        Assert.assertEquals(InetAddress.getLocalHost(), jmxConfig.getHostname());
+        Assert.assertEquals(InetAddress.getByName("127.0.0.1"), jmxConfig.getHostname());
         Assert.assertTrue(jmxConfig.getRmiRegistryPort() > 0);
         Assert.assertTrue(jmxConfig.getRmiServerPort() > 0);
     }
