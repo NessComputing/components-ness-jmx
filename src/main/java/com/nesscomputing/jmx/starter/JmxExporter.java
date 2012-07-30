@@ -27,6 +27,7 @@ import javax.management.remote.JMXServiceURL;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.nesscomputing.jmx.starter.guice.IOExceptionProvider;
 import com.nesscomputing.jmx.starter.guice.JmxStarterModule;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.OnStage;
@@ -45,11 +46,11 @@ public class JmxExporter
 
     @Inject
     public JmxExporter(final MBeanServer server,
-                       final JmxExporterConfig config,
+                       final IOExceptionProvider<JmxExporterConfig> configProvider,
                        @Named(JmxStarterModule.JMX_STARTER_NAME) final Map<String, String> env)
         throws IOException
     {
-        this.config = config;
+        this.config = configProvider.get();
 
         try {
             final String hostName = config.getHostname().getHostAddress();

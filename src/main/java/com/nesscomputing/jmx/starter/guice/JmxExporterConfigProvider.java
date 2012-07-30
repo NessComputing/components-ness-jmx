@@ -18,31 +18,46 @@ package com.nesscomputing.jmx.starter.guice;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.nesscomputing.galaxy.GalaxyConfig;
 import com.nesscomputing.jmx.starter.JmxExporterConfig;
 import com.nesscomputing.jmx.starter.NetUtils;
 
-public class JmxExporterConfigProvider implements Provider<JmxExporterConfig>
+public class JmxExporterConfigProvider implements IOExceptionProvider<JmxExporterConfig>
 {
-    private final JmxExporterConfig jmxExporterConfig;
+    private final InetAddress configuredHost;
+    private final Integer configuredPort;
+
+    private InetAddress galaxyHost = null;
+    private Integer galaxyPort = null;
 
     @Inject
-    public JmxExporterConfigProvider(final JmxStarterConfig jmxStarterConfig, final GalaxyConfig galaxyConfig)
+    public JmxExporterConfigProvider(final JmxStarterConfig jmxStarterConfig)
         throws IOException
     {
-        final String host = jmxStarterConfig.isBindInternal() ? galaxyConfig.getInternalIp().getIp()
-                                                      : galaxyConfig.getExternalIp().getIp();
-        final int port = galaxyConfig.getPrivate().getPortJmx() == 0 ? NetUtils.findUnusedPort()
-                                                                     : galaxyConfig.getPrivate().getPortJmx();
+        this.configuredPort = jmxStarterConfig.getBindPort();
+        this.configuredHost = jmxStarterConfig.getBindAddress() == null ? null : InetAddress.getByName(jmxStarterConfig.getBindAddress());
+    }
 
-        this.jmxExporterConfig = JmxExporterConfig.defaultJmxExporterConfig(InetAddress.getByName(host), port);
+    @Inject(optional=true)
+    void injectGalaxyConfig(final GalaxyConfig galaxyConfig)
+        throws IOException
+    {
+        this.galaxyPort = galaxyConfig.getPrivate().getPortJmx() == 0 ? null : galaxyConfig.getPrivate().getPortJmx();
+        final String host =galaxyConfig.getInternalIp().getIp();
+        if (host != null) {
+            this.galaxyHost = InetAddress.getByName(host);
+        }
     }
 
     @Override
     public JmxExporterConfig get()
+        throws IOException
     {
-        return jmxExporterConfig;
+        Integer port = ObjectUtils.firstNonNull(galaxyPort, configuredPort, NetUtils.findUnusedPort());
+        final InetAddress hostAddr = ObjectUtils.firstNonNull(galaxyHost, configuredHost);
+        return JmxExporterConfig.defaultJmxExporterConfig(hostAddr, port);
     }
 }

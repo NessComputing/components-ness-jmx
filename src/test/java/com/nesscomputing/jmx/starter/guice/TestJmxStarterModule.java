@@ -37,7 +37,7 @@ import com.nesscomputing.testing.lessio.AllowNetworkAccess;
 import com.nesscomputing.testing.lessio.AllowNetworkListen;
 
 @AllowNetworkListen(ports={0})
-@AllowNetworkAccess(endpoints={"127.0.0.1:*"})
+@AllowNetworkAccess(endpoints={"0.0.0.0:*","127.0.0.1:*"})
 public class TestJmxStarterModule
 {
     @Inject
@@ -81,7 +81,29 @@ public class TestJmxStarterModule
 
         lifecycle.executeTo(LifecycleStage.STOP_STAGE);
         Assert.assertFalse(jmxExporter.isActive());
-}
+    }
+
+    @Test
+    public void testWildcardOk()
+        throws Exception
+    {
+        final Config config = Config.getFixedConfig("ness.jmx.bind-address", "0.0.0.0");
+        final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config), new LifecycleModule(), new JmxStarterModule(config));
+        inj.injectMembers(this);
+
+        final Lifecycle lifecycle = inj.getInstance(Lifecycle.class);
+
+        Assert.assertNotNull(jmxExporter);
+
+        Assert.assertFalse(jmxExporter.isActive());
+
+        lifecycle.executeTo(LifecycleStage.START_STAGE);
+
+        Assert.assertTrue(jmxExporter.isActive());
+
+        lifecycle.executeTo(LifecycleStage.STOP_STAGE);
+        Assert.assertFalse(jmxExporter.isActive());
+    }
 
 
 
