@@ -77,4 +77,16 @@ public class JmxStarterModule extends AbstractModule
             LOG.info("Not exporting JMX.");
         }
     }
+
+    @Override
+    public int hashCode()
+    {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return obj != null && getClass().equals(obj.getClass());
+    }
 }
