@@ -15,7 +15,10 @@
  */
 package com.nesscomputing.jmx.jolokia;
 
+import java.lang.annotation.Annotation;
 import java.util.Map;
+
+import javax.servlet.http.HttpServlet;
 
 import org.apache.commons.configuration.Configuration;
 import org.jolokia.backend.BackendManager;
@@ -26,11 +29,21 @@ import org.jolokia.util.ConfigKey;
 import org.jolokia.util.LogHandler;
 
 import com.google.common.collect.Maps;
+import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
+import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
 import com.nesscomputing.config.Config;
+import com.nesscomputing.config.ConfigProvider;
+import com.nesscomputing.lifecycle.Lifecycle;
+import com.nesscomputing.lifecycle.LifecycleListener;
+import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.logging.Log;
 
 /**
@@ -38,11 +51,15 @@ import com.nesscomputing.logging.Log;
  */
 public class JolokiaModule extends ServletModule
 {
+    static final Annotation JOLOKIA_SERVLET = Names.named("_jolokiaServlet");
+
     @Override
     public void configureServlets()
     {
-        bind(JolokiaServlet.class).in(Scopes.SINGLETON);
-        serve("/jolokia/*").with(JolokiaServlet.class);
+        bind (JolokiaConfig.class).toProvider(ConfigProvider.of(JolokiaConfig.class));
+
+        bind (HttpServlet.class).annotatedWith(JOLOKIA_SERVLET).toProvider(JolokiaServletProvider.class).in(Scopes.SINGLETON);
+        serve("/jolokia/*").with(Key.get(HttpServlet.class, JOLOKIA_SERVLET));
         configureRestrictor();
     }
 
@@ -54,54 +71,98 @@ public class JolokiaModule extends ServletModule
         bind(Restrictor.class).to(AllowAllRestrictor.class).in(Scopes.SINGLETON);
     }
 
-    @Provides
-    @Singleton
-    BackendManager getBackendManager(final Config config, final LogHandler logHandler, final Restrictor restrictor)
+    static class JolokiaServletProvider implements Provider<HttpServlet>
     {
-        final Configuration jolokiaConfig = config.getConfiguration("ness.jolokia");
-        final Map<ConfigKey, String> configMap = Maps.newEnumMap(ConfigKey.class);
 
-        for (final ConfigKey key : ConfigKey.values()) {
-            if (key.isGlobalConfig()) {
-                configMap.put(key, jolokiaConfig.getString(key.getKeyValue(), key.getDefaultValue()));
-            }
+        private final JolokiaConfig config;
+        private final Injector injector;
+
+        @Inject
+        JolokiaServletProvider(JolokiaConfig config, Injector injector)
+        {
+            this.config = config;
+            this.injector = injector;
         }
 
-        return new BackendManager(configMap, logHandler, restrictor);
+        @Override
+        public HttpServlet get()
+        {
+            if (config.isJolokiaEnabled())
+            {
+                return injector.createChildInjector(new RealJolokiaModule()).getInstance(JolokiaServlet.class);
+            }
+
+            return new NoJolokiaServlet();
+        }
     }
 
-    @Provides
-    @Singleton
-    HttpRequestHandler getHttpRequestHandler(final LogHandler logHandler, final BackendManager backendManager)
+    private static class RealJolokiaModule extends AbstractModule
     {
-        return new HttpRequestHandler(backendManager, logHandler);
-    }
+        @Override
+        protected void configure()
+        {
+            bind (JolokiaServlet.class);
+        }
 
-    @Provides
-    @Singleton
-    LogHandler getLogHandler()
-    {
-        final Log jolokiaLog = Log.forName("jolokia");
+        @Provides
+        @Singleton
+        BackendManager getBackendManager(final Config config, final LogHandler logHandler, final Restrictor restrictor, final Lifecycle lifecycle)
+        {
+            final Configuration jolokiaConfig = config.getConfiguration("ness.jolokia");
+            final Map<ConfigKey, String> configMap = Maps.newEnumMap(ConfigKey.class);
 
-        return new LogHandler() {
-
-            @Override
-            public void debug(final String message)
-            {
-                jolokiaLog.debug(message);
+            for (final ConfigKey key : ConfigKey.values()) {
+                if (key.isGlobalConfig()) {
+                    configMap.put(key, jolokiaConfig.getString(key.getKeyValue(), key.getDefaultValue()));
+                }
             }
 
-            @Override
-            public void info(final String message)
-            {
-                jolokiaLog.info(message);
-            }
+            final BackendManager backendManager = new BackendManager(configMap, logHandler, restrictor);
 
-            @Override
-            public void error(final String message, final Throwable t)
-            {
-                jolokiaLog.error(t, message);
-            }
-        };
+            lifecycle.addListener(LifecycleStage.STOP_STAGE, new LifecycleListener() {
+                @Override
+                public void onStage(LifecycleStage lifecycleStage)
+                {
+                    backendManager.destroy();
+                }
+            });
+
+            return backendManager;
+        }
+
+        @Provides
+        @Singleton
+        HttpRequestHandler getHttpRequestHandler(final LogHandler logHandler, final BackendManager backendManager)
+        {
+            return new HttpRequestHandler(backendManager, logHandler);
+        }
+
+        @Provides
+        @Singleton
+        LogHandler getLogHandler()
+        {
+            final Log jolokiaLog = Log.forName("jolokia");
+
+            return new LogHandler() {
+
+                @Override
+                public void debug(final String message)
+                {
+                    jolokiaLog.debug(message);
+                }
+
+                @Override
+                public void info(final String message)
+                {
+                    jolokiaLog.info(message);
+                }
+
+                @Override
+                public void error(final String message, final Throwable t)
+                {
+                    jolokiaLog.error(t, message);
+                }
+            };
+        }
     }
 }

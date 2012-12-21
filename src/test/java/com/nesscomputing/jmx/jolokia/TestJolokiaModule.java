@@ -15,15 +15,18 @@
  */
 package com.nesscomputing.jmx.jolokia;
 
+import javax.servlet.http.HttpServlet;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Stage;
 import com.nesscomputing.config.ConfigModule;
 import com.nesscomputing.jmx.jolokia.JolokiaModule;
-import com.nesscomputing.jmx.jolokia.JolokiaServlet;
+import com.nesscomputing.lifecycle.guice.LifecycleModule;
 
 public class TestJolokiaModule
 {
@@ -31,10 +34,11 @@ public class TestJolokiaModule
     public void testSpinup()
     {
         final Injector injector = Guice.createInjector(Stage.PRODUCTION,
-                                                       ConfigModule.forTesting(),
+                                                       ConfigModule.forTesting("ness.jolokia.enabled", "true"),
+                                                       new LifecycleModule(),
                                                        new JolokiaModule());
 
 
-        Assert.assertNotNull(injector.getInstance(JolokiaServlet.class));
+        Assert.assertNotNull(injector.getInstance(Key.get(HttpServlet.class, JolokiaModule.JOLOKIA_SERVLET)));
     }
 }
