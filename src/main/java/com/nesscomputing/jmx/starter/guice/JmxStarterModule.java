@@ -63,6 +63,8 @@ public class JmxStarterModule extends AbstractModule
                 builder.put("jmx.remote.x.access.file", jmxStarterConfig.getAccessFile());
             }
 
+            builder.put("jmx.remote.x.daemon", "true");
+
             bind(new TypeLiteral<Map<String, String>>() {}).annotatedWith(JMX_STARTER_NAMED).toInstance(builder.build());
 
             bind(JmxExporterConfigProvider.class).in(Scopes.SINGLETON);
