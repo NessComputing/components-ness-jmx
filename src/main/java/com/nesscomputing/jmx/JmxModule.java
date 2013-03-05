@@ -20,20 +20,18 @@ import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 
 import org.weakref.jmx.MBeanExporter;
-import org.weakref.jmx.guice.MBeanModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
-
-import com.nesscomputing.jmx.agent.JmxAgentAttachModule;
 import com.nesscomputing.lifecycle.Lifecycle;
 
 /**
  * Sets up JMX bindings.  Specifically, binds an {@link MBeanExporter}
  * that records all bindings made and will automagically unbind them at
- * {@link Lifecycle} STOP_STAGE.  Binds a few default JMX MBeans.
+ * {@link Lifecycle} STOP_STAGE.
+ * @author steven
  */
 
 public class JmxModule extends AbstractModule
@@ -42,11 +40,6 @@ public class JmxModule extends AbstractModule
     protected void configure()
     {
         bind(MBeanExporter.class).to(LifecycledMBeanExporter.class).in(Scopes.SINGLETON);
-        install (new JmxAgentAttachModule());
-
-        // Ensure that the InternalMBeanModule gets installed, otherwise none of the
-        // jmxutils bindings will show up.
-        install (new MBeanModule());
     }
 
     @Provides

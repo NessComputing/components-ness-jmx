@@ -17,7 +17,6 @@ package com.nesscomputing.jmx.starter.guice;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.weakref.jmx.testing.TestingMBeanServer;
 
 import com.google.inject.Binder;
 import com.google.inject.Guice;
@@ -48,7 +47,7 @@ public class TestJmxStarterModule
     public void testDisabled()
     {
         final Config config = Config.getFixedConfig("ness.jmx.enabled", "false");
-        final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config, true), new JmxStarterModule(config));
+        final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config), new JmxStarterModule(config));
 
         Assert.assertNull(inj.getExistingBinding(Key.get(JmxExporter.class)));
     }
@@ -57,7 +56,7 @@ public class TestJmxStarterModule
     public void testDefault()
     {
         final Config config = Config.getFixedConfig("galaxy.private.port.jmx", "0");
-        final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config, true), new JmxStarterModule(config), new GalaxyConfigModule());
+        final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config), new JmxStarterModule(config), new GalaxyConfigModule());
         inj.injectMembers(this);
         Assert.assertNotNull(jmxExporter);
     }
@@ -67,7 +66,7 @@ public class TestJmxStarterModule
         throws Exception
     {
         final Config config = Config.getFixedConfig("galaxy.private.port.jmx", "0");
-        final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config, false), new LifecycleModule(), new JmxStarterModule(config), new GalaxyConfigModule());
+        final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config), new LifecycleModule(), new JmxStarterModule(config), new GalaxyConfigModule());
         inj.injectMembers(this);
 
         final Lifecycle lifecycle = inj.getInstance(Lifecycle.class);
@@ -89,7 +88,7 @@ public class TestJmxStarterModule
         throws Exception
     {
         final Config config = Config.getFixedConfig("ness.jmx.bind-address", "0.0.0.0");
-        final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config, false), new LifecycleModule(), new JmxStarterModule(config));
+        final Injector inj = Guice.createInjector(Stage.PRODUCTION, boilerplate(config), new LifecycleModule(), new JmxStarterModule(config));
         inj.injectMembers(this);
 
         final Lifecycle lifecycle = inj.getInstance(Lifecycle.class);
@@ -108,21 +107,8 @@ public class TestJmxStarterModule
 
 
 
-    private Module boilerplate(final Config config, boolean overrideServer)
+    private Module boilerplate(final Config config)
     {
-
-        final JmxModule module;
-        if (!overrideServer) {
-            module = new JmxModule();
-        } else {
-            module = new JmxModule() {
-                @Override
-                public javax.management.MBeanServer getPlatformMBeanServer() {
-                    return new TestingMBeanServer();
-                }
-            };
-        }
-
         return new Module() {
             @Override
             public void configure(final Binder binder) {
@@ -130,7 +116,7 @@ public class TestJmxStarterModule
                 binder.requireExplicitBindings();
 
                 binder.install(new ConfigModule(config));
-                binder.install(module);
+                binder.install(new JmxModule());
             }
         };
     }
