@@ -23,9 +23,12 @@ import org.weakref.jmx.MBeanExporter;
 import org.weakref.jmx.guice.MBeanModule;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
+import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
+import com.google.inject.util.Modules;
 import com.nesscomputing.lifecycle.Lifecycle;
 
 /**
@@ -39,11 +42,12 @@ public class JmxModule extends AbstractModule
     @Override
     protected void configure()
     {
-        bind(MBeanExporter.class).to(LifecycledMBeanExporter.class).in(Scopes.SINGLETON);
-
-        // Ensure that the InternalMBeanModule gets installed, otherwise none of the
-        // jmxutils bindings will show up.
-        install (new MBeanModule());
+        install(Modules.override(new MBeanModule()).with(new Module() {
+            @Override
+            public void configure(final Binder binder) {
+                binder.bind(MBeanExporter.class).to(LifecycledMBeanExporter.class).in(Scopes.SINGLETON);
+            }
+        }));
     }
 
     @Provides
