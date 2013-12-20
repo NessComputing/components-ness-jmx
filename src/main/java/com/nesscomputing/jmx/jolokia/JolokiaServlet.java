@@ -42,14 +42,14 @@ public class JolokiaServlet extends HttpServlet
     private static final long serialVersionUID = 42L;
 
     // POST- and GET- HttpRequestHandler
-    private transient final ServletRequestHandler httpGetHandler;
-    private transient final ServletRequestHandler httpPostHandler;
+    private final transient ServletRequestHandler httpGetHandler;
+    private final transient ServletRequestHandler httpPostHandler;
 
     // Backend dispatcher
-    private transient final BackendManager backendManager;
+    private final transient BackendManager backendManager;
 
     // Request handler for parsing request parameters and building up a response
-    private transient final HttpRequestHandler requestHandler;
+    private final transient HttpRequestHandler requestHandler;
 
     @Inject
     public JolokiaServlet(final BackendManager backendManager,
