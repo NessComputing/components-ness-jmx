@@ -19,9 +19,6 @@ import java.lang.management.ManagementFactory;
 
 import javax.management.MBeanServer;
 
-import org.weakref.jmx.MBeanExporter;
-import org.weakref.jmx.guice.MBeanModule;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -29,7 +26,9 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.util.Modules;
-import com.nesscomputing.lifecycle.Lifecycle;
+
+import org.weakref.jmx.MBeanExporter;
+import org.weakref.jmx.guice.MBeanModule;
 
 /**
  * Sets up JMX bindings.  Specifically, binds an {@link MBeanExporter}

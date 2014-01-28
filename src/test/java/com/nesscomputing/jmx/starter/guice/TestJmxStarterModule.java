@@ -15,10 +15,6 @@
  */
 package com.nesscomputing.jmx.starter.guice;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.weakref.jmx.testing.TestingMBeanServer;
-
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -26,6 +22,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Stage;
+
 import com.nesscomputing.config.Config;
 import com.nesscomputing.config.ConfigModule;
 import com.nesscomputing.galaxy.GalaxyConfigModule;
@@ -34,8 +31,12 @@ import com.nesscomputing.jmx.starter.JmxExporter;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
-import com.nesscomputing.testing.lessio.AllowNetworkAccess;
-import com.nesscomputing.testing.lessio.AllowNetworkListen;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.kitei.testing.lessio.AllowNetworkAccess;
+import org.kitei.testing.lessio.AllowNetworkListen;
+import org.weakref.jmx.testing.TestingMBeanServer;
 
 @AllowNetworkListen(ports={0})
 @AllowNetworkAccess(endpoints={"0.0.0.0:*","127.0.0.1:*"})

@@ -17,16 +17,16 @@ package com.nesscomputing.jmx.jolokia;
 
 import javax.servlet.http.HttpServlet;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Stage;
+
 import com.nesscomputing.config.ConfigModule;
-import com.nesscomputing.jmx.jolokia.JolokiaModule;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 public class TestJolokiaModule
 {

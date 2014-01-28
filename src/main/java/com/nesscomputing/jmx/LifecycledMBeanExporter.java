@@ -17,13 +17,14 @@ package com.nesscomputing.jmx;
 
 import javax.management.MBeanServer;
 
-import org.weakref.jmx.MBeanExporter;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.OnStage;
 import com.nesscomputing.logging.Log;
+
+import org.weakref.jmx.MBeanExporter;
 
 
 @Singleton

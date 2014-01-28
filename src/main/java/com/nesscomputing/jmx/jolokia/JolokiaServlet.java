@@ -25,13 +25,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import org.jolokia.backend.BackendManager;
 import org.jolokia.http.HttpRequestHandler;
 import org.jolokia.util.ConfigKey;
 import org.json.simple.JSONAware;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 /**
  * Expose Jolokia REST APIs through a Guice driven servlet.
@@ -42,14 +42,14 @@ public class JolokiaServlet extends HttpServlet
     private static final long serialVersionUID = 42L;
 
     // POST- and GET- HttpRequestHandler
-    private transient final ServletRequestHandler httpGetHandler;
-    private transient final ServletRequestHandler httpPostHandler;
+    private final transient ServletRequestHandler httpGetHandler;
+    private final transient ServletRequestHandler httpPostHandler;
 
     // Backend dispatcher
-    private transient final BackendManager backendManager;
+    private final transient BackendManager backendManager;
 
     // Request handler for parsing request parameters and building up a response
-    private transient final HttpRequestHandler requestHandler;
+    private final transient HttpRequestHandler requestHandler;
 
     @Inject
     public JolokiaServlet(final BackendManager backendManager,
@@ -112,7 +112,7 @@ public class JolokiaServlet extends HttpServlet
         writer.flush();
     }
 
-    private static interface ServletRequestHandler
+    private interface ServletRequestHandler
     {
         JSONAware handleRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException;
     }
