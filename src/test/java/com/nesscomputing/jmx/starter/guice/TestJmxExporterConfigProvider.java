@@ -19,10 +19,6 @@ import java.net.InetAddress;
 
 import javax.management.MBeanServer;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.weakref.jmx.testing.TestingMBeanServer;
-
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -30,11 +26,16 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
+
 import com.nesscomputing.config.Config;
 import com.nesscomputing.config.ConfigModule;
 import com.nesscomputing.galaxy.GalaxyConfigModule;
 import com.nesscomputing.jmx.starter.JmxExporterConfig;
-import com.nesscomputing.testing.lessio.AllowNetworkListen;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.kitei.testing.lessio.AllowNetworkListen;
+import org.weakref.jmx.testing.TestingMBeanServer;
 
 @AllowNetworkListen(ports={0})
 public class TestJmxExporterConfigProvider

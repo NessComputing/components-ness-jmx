@@ -20,14 +20,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 
-import org.apache.commons.configuration.Configuration;
-import org.jolokia.backend.BackendManager;
-import org.jolokia.http.HttpRequestHandler;
-import org.jolokia.restrictor.AllowAllRestrictor;
-import org.jolokia.restrictor.Restrictor;
-import org.jolokia.util.ConfigKey;
-import org.jolokia.util.LogHandler;
-
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -39,12 +31,21 @@ import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
+
 import com.nesscomputing.config.Config;
 import com.nesscomputing.config.ConfigProvider;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleListener;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.logging.Log;
+
+import org.apache.commons.configuration.Configuration;
+import org.jolokia.backend.BackendManager;
+import org.jolokia.http.HttpRequestHandler;
+import org.jolokia.restrictor.AllowAllRestrictor;
+import org.jolokia.restrictor.Restrictor;
+import org.jolokia.util.ConfigKey;
+import org.jolokia.util.LogHandler;
 
 /**
  * Bind the jolokia servlet in the Trumpet context.

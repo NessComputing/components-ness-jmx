@@ -25,13 +25,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import org.jolokia.backend.BackendManager;
 import org.jolokia.http.HttpRequestHandler;
 import org.jolokia.util.ConfigKey;
 import org.json.simple.JSONAware;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 /**
  * Expose Jolokia REST APIs through a Guice driven servlet.
@@ -112,7 +112,7 @@ public class JolokiaServlet extends HttpServlet
         writer.flush();
     }
 
-    private static interface ServletRequestHandler
+    private interface ServletRequestHandler
     {
         JSONAware handleRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException;
     }

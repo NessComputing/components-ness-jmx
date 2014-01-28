@@ -17,8 +17,6 @@ package com.nesscomputing.jmx.starter.guice;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -26,10 +24,13 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.google.inject.throwingproviders.ThrowingProviderBinder;
+
 import com.nesscomputing.config.Config;
 import com.nesscomputing.jmx.starter.JmxExporter;
 import com.nesscomputing.jmx.starter.JmxExporterConfig;
 import com.nesscomputing.logging.Log;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class JmxStarterModule extends AbstractModule
 {

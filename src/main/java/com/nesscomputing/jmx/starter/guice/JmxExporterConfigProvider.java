@@ -18,12 +18,13 @@ package com.nesscomputing.jmx.starter.guice;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import com.google.inject.Inject;
+
 import com.nesscomputing.galaxy.GalaxyConfig;
 import com.nesscomputing.jmx.starter.JmxExporterConfig;
 import com.nesscomputing.jmx.starter.NetUtils;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 public class JmxExporterConfigProvider implements IOExceptionProvider<JmxExporterConfig>
 {
