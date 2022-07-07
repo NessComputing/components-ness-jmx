@@ -51,7 +51,7 @@
     <dependency>
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia-core</artifactId>
-      <version>1.0.2</version>
+      <version>1.6.1</version>
     </dependency>
 
     <dependency>
